@@ -1,0 +1,46 @@
+name = "fleet-pipeline"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# ─── D1 Database ───
+[[d1_databases]]
+binding = "DB"
+database_name = "fleet-pipeline-db"
+database_id = "fleet-pipeline-d1"
+
+# ─── R2 Bucket (visuals + audio) ───
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "fleet-media"
+
+# ─── AI Binding ───
+[ai]
+binding = "AI"
+
+# ─── Cron Triggers ───
+# Quota Manager: every hour on the hour
+# Story Organizer: every 6 hours (00, 06, 12, 18 UTC)
+# Audio Producer: 23:00 UTC — right before midnight reset
+# Podcast Assembler: Sundays at 23:30 UTC
+[triggers]
+crons = [
+  "0 * * * *",       # Quota Manager — hourly
+  "0 0,6,12,18 * * *", # Story Organizer — 4x daily
+  "0 23 * * *",      # Audio Producer — pre-reset burst
+  "30 23 * * 0"      # Podcast Assembler — Sunday pre-reset
+]
+
+# ─── Environment Variables ───
+[vars]
+GITHUB_REPO = "SuperInstance/ai-writings"
+DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
+WIKI_BASE_URL = "https://ai-writings.pages.dev"
+
+# ─── Secrets (set via wrangler) ───
+# wrangler secret put GITHUB_TOKEN
+# wrangler secret put DEEPSEEK_API_KEY
+
+# ─── KV Namespace (quota tracking) ───
+[[kv_namespaces]]
+binding = "PULSE"
+id = "fleet-pulse-kv"
