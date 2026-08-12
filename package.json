@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "init-db": "wrangler d1 execute fleet-pipeline-db --file=schema.sql --remote"
+    "init-db": "wrangler d1 execute fleet-pipeline-db --file=schema.sql --remote",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240924.0",
